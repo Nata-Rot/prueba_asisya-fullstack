@@ -1,0 +1,775 @@
+{
+  "info": {
+    "name": "Asisya API - Prueba Técnica",
+    "description": "Collection completa para probar todos los requerimientos de la prueba técnica Asisya",
+    "version": "1.0.0"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5025",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "🔑 Autenticación",
+      "item": [
+        {
+          "name": "1. Login - Obtener Token JWT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('token', jsonData.token);",
+                  "    pm.test('Login successful', () => {",
+                  "        pm.expect(jsonData.token).to.not.be.empty;",
+                  "    });",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Validar Token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "validate"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📂 Categorías",
+      "item": [
+        {
+          "name": "3. Crear Categoría SERVIDORES",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SERVIDORES\",\n  \"description\": \"Servidores físicos y virtuales para infraestructura empresarial\",\n  \"picture\": \"https://example.com/images/servers.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category"]
+            }
+          }
+        },
+        {
+          "name": "4. Crear Categoría CLOUD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"CLOUD\",\n  \"description\": \"Servicios y soluciones de computación en la nube\",\n  \"picture\": \"https://example.com/images/cloud.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category"]
+            }
+          }
+        },
+        {
+          "name": "5. Listar Todas las Categorías",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/category",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category"]
+            }
+          }
+        },
+        {
+          "name": "6. Obtener Categoría por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/category/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category", "1"]
+            }
+          }
+        },
+        {
+          "name": "7. Actualizar Categoría",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"SERVIDORES ACTUALIZADOS\",\n  \"description\": \"Servidores físicos y virtuales actualizados\",\n  \"picture\": \"https://example.com/images/servers-updated.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/category/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category", "1"]
+            }
+          }
+        },
+        {
+          "name": "8. Eliminar Categoría",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/category/3",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category", "3"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📦 Productos",
+      "item": [
+        {
+          "name": "9. Crear Producto Individual",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"Dell PowerEdge R750\",\n  \"categoryId\": 1,\n  \"quantityPerUnit\": \"1 unit\",\n  \"unitPrice\": 5500.00,\n  \"unitsInStock\": 25,\n  \"unitsOnOrder\": 5,\n  \"reorderLevel\": 10,\n  \"discontinued\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"]
+            }
+          }
+        },
+        {
+          "name": "10. Generar 1000 Productos Aleatorios",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/generate?count=1000&categoryId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "generate"],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "1000"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "10b. Generar 50000 Productos SERVIDORES",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/generate?count=50000&categoryId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "generate"],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "50000"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "10c. Generar 50000 Productos CLOUD",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/generate?count=50000&categoryId=2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "generate"],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "50000"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "11. Crear Productos en Lote",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"productName\": \"IBM System x3650 M5\",\n    \"categoryId\": 1,\n    \"quantityPerUnit\": \"1 unit\",\n    \"unitPrice\": 4200.00,\n    \"unitsInStock\": 15,\n    \"unitsOnOrder\": 0,\n    \"reorderLevel\": 5,\n    \"discontinued\": false\n  },\n  {\n    \"productName\": \"HP ProLiant DL380 Gen10\",\n    \"categoryId\": 1,\n    \"quantityPerUnit\": \"1 unit\",\n    \"unitPrice\": 3800.00,\n    \"unitsInStock\": 20,\n    \"unitsOnOrder\": 2,\n    \"reorderLevel\": 8,\n    \"discontinued\": false\n  },\n  {\n    \"productName\": \"AWS EC2 t3.large Instance\",\n    \"categoryId\": 2,\n    \"quantityPerUnit\": \"1 hour\",\n    \"unitPrice\": 0.0832,\n    \"unitsInStock\": 1000,\n    \"unitsOnOrder\": 0,\n    \"reorderLevel\": 0,\n    \"discontinued\": false\n  }\n]"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product/batch",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "batch"]
+            }
+          }
+        },
+        {
+          "name": "12. Listar Productos con Paginación",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=1&pageSize=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "13. Buscar Productos por Texto",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=1&pageSize=10&search=servidor",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "search",
+                  "value": "servidor"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "14. Filtrar Productos por Categoría",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=1&pageSize=10&categoryId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "15. Ordenar Productos",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=1&pageSize=10&sortBy=productName&sortDescending=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "10"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "productName"
+                },
+                {
+                  "key": "sortDescending",
+                  "value": "false"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "16. Consulta Avanzada Completa",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=1&pageSize=20&search=Dell&categoryId=1&sortBy=unitPrice&sortDescending=true",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                },
+                {
+                  "key": "search",
+                  "value": "Dell"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                },
+                {
+                  "key": "sortBy",
+                  "value": "unitPrice"
+                },
+                {
+                  "key": "sortDescending",
+                  "value": "true"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "17. Obtener Producto por ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "1"]
+            }
+          }
+        },
+        {
+          "name": "18. Actualizar Producto",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"Dell PowerEdge R750 - Actualizado\",\n  \"categoryId\": 1,\n  \"quantityPerUnit\": \"1 unit\",\n  \"unitPrice\": 5800.00,\n  \"unitsInStock\": 30,\n  \"unitsOnOrder\": 3,\n  \"reorderLevel\": 12,\n  \"discontinued\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "1"]
+            }
+          }
+        },
+        {
+          "name": "19. Eliminar Producto",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "2"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🔍 Diagnóstico",
+      "item": [
+        {
+          "name": "20. Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📊 Performance Tests",
+      "item": [
+        {
+          "name": "22. Carga Masiva 10000 Productos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/generate?count=10000&categoryId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "generate"],
+              "query": [
+                {
+                  "key": "count",
+                  "value": "10000"
+                },
+                {
+                  "key": "categoryId",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "23. Consulta Gran Volumen",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=1&pageSize=100",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "100"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "24. Navegación Páginas Grandes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product?page=500&pageSize=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "500"
+                },
+                {
+                  "key": "pageSize",
+                  "value": "20"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🧪 Error Tests",
+      "item": [
+        {
+          "name": "25. Producto No Encontrado",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product", "999999"]
+            }
+          }
+        },
+        {
+          "name": "26. Categoría No Encontrada",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/category/999999",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "category", "999999"]
+            }
+          }
+        },
+        {
+          "name": "27. Token Inválido",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer invalid_token_here"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/product",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"]
+            }
+          }
+        },
+        {
+          "name": "28. Sin Autorización",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/product",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"]
+            }
+          }
+        },
+        {
+          "name": "29. Datos Inválidos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productName\": \"\",\n  \"categoryId\": 999,\n  \"unitPrice\": -100\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/product",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "product"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

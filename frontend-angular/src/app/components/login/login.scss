@@ -1,0 +1,192 @@
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/><circle cx="90" cy="90" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+  }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background: rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15), 0 2px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  mat-card-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 32px 24px 24px;
+    text-align: center;
+    border-radius: 0;
+    
+    mat-card-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    
+    mat-card-subtitle {
+      font-size: 16px;
+      opacity: 0.9;
+      color: white;
+      font-weight: 400;
+    }
+  }
+  
+  mat-card-content {
+    padding: 32px 24px 24px;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+
+  mat-form-field {
+    width: 100%;
+    
+    &.mat-mdc-form-field {
+      .mat-mdc-text-field-wrapper {
+        background-color: rgba(0, 0, 0, 0.02);
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.04);
+        }
+      }
+      
+      &.mat-focused .mat-mdc-text-field-wrapper {
+        background-color: rgba(103, 126, 234, 0.05);
+      }
+    }
+  }
+
+  .login-button {
+    height: 48px;
+    font-size: 16px;
+    font-weight: 600;
+    margin-top: 8px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: all 0.3s ease;
+    text-transform: none;
+    letter-spacing: 0.5px;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 25px rgba(103, 126, 234, 0.3);
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    mat-spinner {
+      margin-right: 8px;
+    }
+  }
+}
+
+.login-footer {
+  background: rgba(248, 250, 252, 0.8);
+  padding: 20px;
+  margin: 0 -24px -24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.demo-credentials {
+  text-align: center;
+  
+  h4 {
+    margin: 0 0 12px 0;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  
+  p {
+    margin: 4px 0;
+    font-size: 13px;
+    color: #6b7280;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    
+    strong {
+      color: #374151;
+      font-weight: 600;
+    }
+  }
+}
+
+.error-message {
+  color: #ef4444;
+  font-size: 14px;
+  margin: 16px 0;
+  text-align: center;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+// Responsive design
+@media (max-width: 480px) {
+  .login-container {
+    padding: 16px;
+  }
+
+  .login-card {
+    max-width: 100%;
+    
+    mat-card-header {
+      padding: 24px 20px 20px;
+      
+      mat-card-title {
+        font-size: 24px;
+      }
+      
+      mat-card-subtitle {
+        font-size: 14px;
+      }
+    }
+    
+    mat-card-content {
+      padding: 24px 20px 20px;
+    }
+  }
+}

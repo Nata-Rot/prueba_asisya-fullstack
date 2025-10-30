@@ -1,0 +1,158 @@
+<div class="product-list-container">
+  <!-- Header con acciones -->
+  <div class="header-actions">
+    <h1>Gestión de Productos</h1>
+    <div class="action-buttons">
+      <button mat-raised-button color="primary" (click)="openProductForm()">
+        <mat-icon>add</mat-icon>
+        Nuevo Producto
+      </button>
+      <button mat-raised-button color="accent" (click)="generateProducts()">
+        <mat-icon>auto_fix_high</mat-icon>
+        Generar Productos
+      </button>
+      <button mat-icon-button (click)="logout()">
+        <mat-icon>logout</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-row">
+        <mat-form-field class="search-field">
+          <mat-label>Buscar productos</mat-label>
+          <input matInput [(ngModel)]="searchTerm" (keyup.enter)="applyFilters()" placeholder="Nombre del producto">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Categoría</mat-label>
+          <mat-select [(value)]="selectedCategoryId" (selectionChange)="applyFilters()">
+            <mat-option [value]="null">Todas las categorías</mat-option>
+            <mat-option *ngFor="let category of categories" [value]="category.id">
+              {{ category.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+          <mat-label>Productos por página</mat-label>
+          <mat-select [(value)]="pageSize" (selectionChange)="applyFilters()">
+            <mat-option [value]="10">10</mat-option>
+            <mat-option [value]="25">25</mat-option>
+            <mat-option [value]="50">50</mat-option>
+            <mat-option [value]="100">100</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button class="filter-button" (click)="applyFilters()">
+          <mat-icon>filter_list</mat-icon>
+          Filtrar
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading indicator -->
+  @if (isLoading) {
+    <div class="loading-container">
+      <mat-spinner></mat-spinner>
+      <p>Cargando productos...</p>
+    </div>
+  }
+
+  <!-- Tabla de productos -->
+  @if (!isLoading) {
+    <mat-card class="table-card">
+    <mat-card-content>
+      <table mat-table [dataSource]="products" class="products-table" matSort>
+        <!-- ID Column -->
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+          <td mat-cell *matCellDef="let product">{{ product.id }}</td>
+        </ng-container>
+
+        <!-- Product Name Column -->
+        <ng-container matColumnDef="productName">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Nombre</th>
+          <td mat-cell *matCellDef="let product">{{ product.productName }}</td>
+        </ng-container>
+
+        <!-- Category Column -->
+        <ng-container matColumnDef="categoryName">
+          <th mat-header-cell *matHeaderCellDef>Categoría</th>
+          <td mat-cell *matCellDef="let product">
+            <div class="category-cell">
+              @if (product.categoryPicture) {
+                <img [src]="product.categoryPicture" 
+                     alt="{{ product.categoryName }}" class="category-image">
+              }
+              <span>{{ product.categoryName || 'Sin categoría' }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Price Column -->
+        <ng-container matColumnDef="unitPrice">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+          <td mat-cell *matCellDef="let product" class="price-cell">
+            {{ product.unitPrice | currency:'USD':'symbol':'1.2-2' }}
+          </td>
+        </ng-container>
+
+        <!-- Stock Column -->
+        <ng-container matColumnDef="unitsInStock">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Stock</th>
+          <td mat-cell *matCellDef="let product" class="stock-cell" 
+              [class.low-stock]="product.unitsInStock < 10"
+              [class.normal-stock]="product.unitsInStock >= 10">
+            {{ product.unitsInStock }}
+          </td>
+        </ng-container>
+
+        <!-- Status Column -->
+        <ng-container matColumnDef="discontinued">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let product" class="status-cell">
+            <span class="status-chip" 
+                  [class.active]="!product.discontinued"
+                  [class.discontinued]="product.discontinued">
+              {{ product.discontinued ? 'Descontinuado' : 'Activo' }}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let product">
+            <div class="action-buttons">
+              <button mat-icon-button class="edit-button" (click)="editProduct(product)" matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="delete-button" (click)="deleteProduct(product)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <!-- Paginación -->
+      <mat-paginator 
+        [length]="totalCount"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 25, 50, 100]"
+        [pageIndex]="currentPage - 1"
+        (page)="onPageChange($event)"
+        showFirstLastButtons>
+      </mat-paginator>
+    </mat-card-content>
+  </mat-card>
+  }
+</div>

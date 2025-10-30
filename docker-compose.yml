@@ -1,0 +1,66 @@
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: asisya-postgres
+    environment:
+      POSTGRES_DB: asisya_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - asisya-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend-dotnet
+      dockerfile: Dockerfile
+    container_name: asisya-backend
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=asisya_db;Username=postgres;Password=admin123;
+      - Jwt__Key=MySecretKeyForJWTTokenGeneration123456789012345
+      - Jwt__Issuer=AsisyaApi
+      - Jwt__Audience=AsisyaApi
+    ports:
+      - "5025:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - asisya-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend-angular
+      dockerfile: Dockerfile
+    container_name: asisya-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - asisya-network
+
+volumes:
+  postgres_data:
+
+networks:
+  asisya-network:
+    driver: bridge
