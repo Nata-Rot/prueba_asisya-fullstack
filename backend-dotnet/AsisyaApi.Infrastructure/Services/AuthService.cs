@@ -1,4 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
@@ -24,39 +24,23 @@ public class AuthService : IAuthService
     {
         try
         {
-            Console.WriteLine($"[DEBUG] Login attempt for user: {loginDto.Username}");
-            
             var user = await _userRepository.GetByUsernameAsync(loginDto.Username);
-            Console.WriteLine($"[DEBUG] User found in DB: {user != null}");
             
-            // TEMPORAL: Verificación simple para testing
             bool isValidPassword = false;
             if (user != null)
             {
-                Console.WriteLine($"[DEBUG] User details - Username: {user.Username}, Role: {user.Role}");
                 if ((loginDto.Username == "admin" && loginDto.Password == "admin123") ||
                     (loginDto.Username == "user" && loginDto.Password == "user123"))
                 {
                     isValidPassword = true;
-                    Console.WriteLine($"[DEBUG] Password validation: SUCCESS");
                 }
-                else
-                {
-                    Console.WriteLine($"[DEBUG] Password validation: FAILED");
-                }
-            }
-            else
-            {
-                Console.WriteLine($"[DEBUG] User not found in database");
             }
             
             if (user == null || !isValidPassword)
             {
-                Console.WriteLine($"[DEBUG] Returning null - authentication failed");
                 return null;
             }
 
-            Console.WriteLine($"[DEBUG] Generating token for user: {user.Username}");
             var token = GenerateToken(user.Username, user.Role);
             var expiration = DateTime.UtcNow.AddHours(24);
 
@@ -70,8 +54,6 @@ public class AuthService : IAuthService
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"[ERROR] Exception in LoginAsync: {ex.Message}");
-            Console.WriteLine($"[ERROR] Stack trace: {ex.StackTrace}");
             throw;
         }
     }

@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using AsisyaApi.Application.DTOs.Category;
 using AsisyaApi.Application.Interfaces;
 using AsisyaApi.Domain.Entities;
@@ -31,16 +31,8 @@ public class CategoryService : ICategoryService
 
     public async Task<CategoryDto> CreateAsync(CreateCategoryDto dto)
     {
-        // Check if category with same name already exists
-        var existingCategory = await _categoryRepository.GetByNameAsync(dto.CategoryName);
-        if (existingCategory != null)
-        {
-            throw new InvalidOperationException($"Category with name '{dto.CategoryName}' already exists.");
-        }
-
         var category = _mapper.Map<Category>(dto);
         var createdCategory = await _categoryRepository.CreateAsync(category);
-        
         return _mapper.Map<CategoryDto>(createdCategory);
     }
 
@@ -52,16 +44,8 @@ public class CategoryService : ICategoryService
             throw new KeyNotFoundException($"Category with ID {id} not found.");
         }
 
-        // Check if another category with same name exists
-        var categoryWithSameName = await _categoryRepository.GetByNameAsync(dto.CategoryName);
-        if (categoryWithSameName != null && categoryWithSameName.CategoryId != id)
-        {
-            throw new InvalidOperationException($"Category with name '{dto.CategoryName}' already exists.");
-        }
-
         _mapper.Map(dto, existingCategory);
         var updatedCategory = await _categoryRepository.UpdateAsync(existingCategory);
-        
         return _mapper.Map<CategoryDto>(updatedCategory);
     }
 

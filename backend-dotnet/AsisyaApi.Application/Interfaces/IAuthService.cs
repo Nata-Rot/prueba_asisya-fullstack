@@ -1,4 +1,4 @@
-using AsisyaApi.Application.DTOs.Auth;
+﻿using AsisyaApi.Application.DTOs.Auth;
 
 namespace AsisyaApi.Application.Interfaces;
 

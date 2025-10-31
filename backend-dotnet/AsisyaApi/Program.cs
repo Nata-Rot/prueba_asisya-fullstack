@@ -11,6 +11,7 @@ using AsisyaApi.Infrastructure.Mappings;
 using AsisyaApi.Domain.Interfaces;
 using AsisyaApi.Application.Interfaces;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();

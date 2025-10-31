@@ -1,4 +1,4 @@
-using AsisyaApi.Application.DTOs.Product;
+﻿using AsisyaApi.Application.DTOs.Product;
 using AsisyaApi.Application.DTOs.Common;
 
 namespace AsisyaApi.Application.Interfaces;

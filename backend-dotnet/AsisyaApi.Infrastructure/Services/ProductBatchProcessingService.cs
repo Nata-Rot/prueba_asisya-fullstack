@@ -1,4 +1,4 @@
-using System.Threading.Channels;
+﻿using System.Threading.Channels;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -18,7 +18,6 @@ public class ProductBatchProcessingService : BackgroundService
         _serviceProvider = serviceProvider;
         _logger = logger;
         
-        // Create a channel for queuing batch requests
         var options = new BoundedChannelOptions(100)
         {
             SingleWriter = false,
