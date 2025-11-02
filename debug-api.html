@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug API</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { color: green; }
+        .error { color: red; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Debug API - Asisya Backend Test</h1>
+    <button onclick="testAPI()">Ejecutar Test Completo</button>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testCreateProduct()">Test Create Product</button>
+    <div id="output"></div>
+    
+    <script>
+        let globalToken = null;
+        
+        async function testLogin() {
+            const output = document.getElementById('output');
+            output.innerHTML += '<div class="test-section"><h3>🔐 Testing Login...</h3>';
+            
+            try {
+                const loginResponse = await fetch('http://localhost:5025/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'admin',
+                        password: 'admin123'
+                    })
+                });
+                
+                console.log('Login response status:', loginResponse.status);
+                const responseText = await loginResponse.text();
+                console.log('Login response text:', responseText);
+                
+                if (!loginResponse.ok) {
+                    throw new Error(`Login failed: ${loginResponse.status} ${loginResponse.statusText} - ${responseText}`);
+                }
+                
+                const loginData = JSON.parse(responseText);
+                console.log('Login successful:', loginData);
+                globalToken = loginData.token;
+                
+                output.innerHTML += `<p class="success">✅ Login successful for user: ${loginData.username || 'N/A'}</p>`;
+                output.innerHTML += `<p>Token (first 50 chars): ${globalToken.substring(0, 50)}...</p>`;
+                output.innerHTML += `<p>Token expiration: ${loginData.expiration || 'N/A'}</p>`;
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                output.innerHTML += `<p class="error">❌ Login Error: ${error.message}</p>`;
+            }
+            
+            output.innerHTML += '</div>';
+        }
+        
+        async function testCreateProduct() {
+            const output = document.getElementById('output');
+            output.innerHTML += '<div class="test-section"><h3>📦 Testing Create Product...</h3>';
+            
+            if (!globalToken) {
+                output.innerHTML += '<p class="error">❌ No token available. Run login test first.</p></div>';
+                return;
+            }
+            
+            try {
+                const productData = {
+                    productName: 'Test Product from Debug HTML',
+                    categoryId: 1,
+                    unitPrice: 99.99,
+                    unitsInStock: 10,
+                    unitsOnOrder: 0,
+                    reorderLevel: 5,
+                    discontinued: false
+                };
+                
+                console.log('Product data to send:', productData);
+                output.innerHTML += `<p>Sending product data: ${JSON.stringify(productData, null, 2)}</p>`;
+                
+                const createResponse = await fetch('http://localhost:5025/api/product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${globalToken}`
+                    },
+                    body: JSON.stringify(productData)
+                });
+                
+                console.log('Create response status:', createResponse.status);
+                console.log('Create response headers:', [...createResponse.headers.entries()]);
+                
+                const responseText = await createResponse.text();
+                console.log('Create response text:', responseText);
+                
+                if (!createResponse.ok) {
+                    output.innerHTML += `<p class="error">❌ Product creation failed: ${createResponse.status} ${createResponse.statusText}</p>`;
+                    output.innerHTML += `<p class="error">Response: ${responseText}</p>`;
+                } else {
+                    const product = JSON.parse(responseText);
+                    console.log('Product created:', product);
+                    output.innerHTML += `<p class="success">✅ Product created successfully: ${product.productName}</p>`;
+                    output.innerHTML += `<p>Product ID: ${product.productId}</p>`;
+                }
+                
+            } catch (error) {
+                console.error('Create product error:', error);
+                output.innerHTML += `<p class="error">❌ Create Product Error: ${error.message}</p>`;
+            }
+            
+            output.innerHTML += '</div>';
+        }
+        
+        async function testAPI() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<h2>🧪 Running Full API Test Suite</h2>';
+            
+            await testLogin();
+            
+            if (globalToken) {
+                // Test categories
+                output.innerHTML += '<div class="test-section"><h3>📂 Testing Categories...</h3>';
+                try {
+                    const categoriesResponse = await fetch('http://localhost:5025/api/category', {
+                        headers: {
+                            'Authorization': `Bearer ${globalToken}`
+                        }
+                    });
+                    
+                    if (!categoriesResponse.ok) {
+                        throw new Error(`Categories failed: ${categoriesResponse.status} ${categoriesResponse.statusText}`);
+                    }
+                    
+                    const categories = await categoriesResponse.json();
+                    console.log('Categories:', categories);
+                    output.innerHTML += `<p class="success">✅ Categories loaded: ${categories.length} items</p>`;
+                    
+                    if (categories.length > 0) {
+                        output.innerHTML += `<p>First category: ${categories[0].categoryName} (ID: ${categories[0].categoryId})</p>`;
+                    }
+                } catch (error) {
+                    console.error('Categories error:', error);
+                    output.innerHTML += `<p class="error">❌ Categories Error: ${error.message}</p>`;
+                }
+                output.innerHTML += '</div>';
+                
+                await testCreateProduct();
+            }
+        }
+    </script>
+</body>
+</html>

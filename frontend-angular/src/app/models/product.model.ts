@@ -1,5 +1,5 @@
 export interface Product {
-  id: number;
+  productId: number;
   productName: string;
   supplierId?: number;
   categoryId?: number;
@@ -11,16 +11,14 @@ export interface Product {
   unitsOnOrder?: number;
   reorderLevel?: number;
   discontinued: boolean;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface CreateProductRequest {
   productName: string;
-  supplierId?: number;
-  categoryId?: number;
-  quantityPerUnit?: string;
-  unitPrice?: number;
+  supplierId?: number | null;
+  categoryId?: number | null;
+  quantityPerUnit?: string | null;
+  unitPrice?: number | null;
   unitsInStock?: number;
   unitsOnOrder?: number;
   reorderLevel?: number;

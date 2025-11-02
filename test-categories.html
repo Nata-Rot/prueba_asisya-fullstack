@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Categories API</title>
+</head>
+<body>
+    <h1>Test Categories API</h1>
+    <button onclick="loadCategories()">Load Categories</button>
+    <div id="result"></div>
+    
+    <script>
+        async function loadCategories() {
+            try {
+                const response = await fetch('http://localhost:5025/api/Category');
+                const categories = await response.json();
+                
+                console.log('Categories loaded:', categories);
+                
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '<h2>Categories:</h2>' + 
+                    categories.map(cat => 
+                        `<p>ID: ${cat.categoryId}, Name: ${cat.categoryName}, Description: ${cat.description}</p>`
+                    ).join('');
+                    
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                document.getElementById('result').innerHTML = '<p style="color: red;">Error: ' + error.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>

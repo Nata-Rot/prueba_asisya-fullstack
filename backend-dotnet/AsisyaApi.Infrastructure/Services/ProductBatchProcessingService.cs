@@ -18,6 +18,7 @@ public class ProductBatchProcessingService : BackgroundService
         _serviceProvider = serviceProvider;
         _logger = logger;
         
+        // Create a channel for queuing batch requests
         var options = new BoundedChannelOptions(100)
         {
             SingleWriter = false,

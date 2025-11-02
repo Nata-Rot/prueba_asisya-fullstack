@@ -147,7 +147,7 @@ export class ProductList implements OnInit {
 
   deleteProduct(product: Product): void {
     if (confirm(`¿Estás seguro de que quieres eliminar el producto "${product.productName}"?`)) {
-      this.productService.deleteProduct(product.id).subscribe({
+      this.productService.deleteProduct(product.productId).subscribe({
         next: () => {
           this.snackBar.open('Producto eliminado exitosamente', 'Cerrar', { duration: 3000 });
           this.loadProducts();

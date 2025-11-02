@@ -20,8 +20,8 @@
         <mat-label>Categoría</mat-label>
         <mat-select formControlName="categoryId">
           <mat-option [value]="null">Sin categoría</mat-option>
-          <mat-option *ngFor="let category of data.categories" [value]="category.id">
-            {{ category.name }}
+          <mat-option *ngFor="let category of data.categories" [value]="category.categoryId">
+            {{ category.categoryName }}
           </mat-option>
         </mat-select>
       </mat-form-field>

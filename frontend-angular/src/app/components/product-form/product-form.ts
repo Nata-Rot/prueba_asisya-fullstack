@@ -1,4 +1,4 @@
-import { Component, Inject, inject } from '@angular/core';
+import { Component, Inject, inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -35,13 +35,15 @@ export interface ProductFormData {
     MatProgressSpinnerModule
   ],
   templateUrl: './product-form.html',
-  styleUrl: './product-form.scss'
+  styleUrl: './product-form.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductForm {
   private fb = inject(FormBuilder);
   private productService = inject(ProductService);
   private snackBar = inject(MatSnackBar);
   private dialogRef = inject(MatDialogRef<ProductForm>);
+  private cdr = inject(ChangeDetectorRef);
 
   productForm: FormGroup;
   isEditMode: boolean;
@@ -60,7 +62,7 @@ export class ProductForm {
     return this.fb.group({
       productName: ['', [Validators.required, Validators.minLength(3)]],
       categoryId: [null],
-      unitPrice: [null, [Validators.min(0)]],
+      unitPrice: [0, [Validators.min(0)]],
       quantityPerUnit: [''],
       unitsInStock: [0, [Validators.min(0)]],
       unitsOnOrder: [0, [Validators.min(0)]],
@@ -86,25 +88,29 @@ export class ProductForm {
     if (this.productForm.valid) {
       this.isLoading = true;
       const formValue = this.productForm.value;
+      console.log('Form values:', formValue);
       
       const productData: CreateProductRequest = {
         productName: formValue.productName,
-        categoryId: formValue.categoryId || undefined,
-        unitPrice: formValue.unitPrice || undefined,
-        quantityPerUnit: formValue.quantityPerUnit || undefined,
+        categoryId: formValue.categoryId || null,
+        unitPrice: formValue.unitPrice || null,
+        quantityPerUnit: formValue.quantityPerUnit || null,
         unitsInStock: formValue.unitsInStock || 0,
         unitsOnOrder: formValue.unitsOnOrder || 0,
         reorderLevel: formValue.reorderLevel || 0,
-        discontinued: formValue.discontinued || false
+        discontinued: formValue.discontinued === true
       };
+      
+      console.log('Product data to be sent:', productData);
 
       const operation = this.isEditMode
-        ? this.productService.updateProduct(this.data.product!.id, productData)
+        ? this.productService.updateProduct(this.data.product!.productId, productData)
         : this.productService.createProduct(productData);
 
       operation.subscribe({
         next: (product) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           const message = this.isEditMode 
             ? 'Producto actualizado exitosamente' 
             : 'Producto creado exitosamente';
@@ -113,11 +119,24 @@ export class ProductForm {
         },
         error: (error) => {
           this.isLoading = false;
+          this.cdr.markForCheck();
           console.error('Error saving product:', error);
-          const message = this.isEditMode 
+          console.error('Product data sent:', productData);
+          
+          let errorMessage = this.isEditMode 
             ? 'Error al actualizar el producto' 
             : 'Error al crear el producto';
-          this.snackBar.open(message, 'Cerrar', { duration: 3000 });
+            
+          // Agregar más detalles del error si están disponibles
+          if (error?.error?.message) {
+            errorMessage += `: ${error.error.message}`;
+          } else if (error?.message) {
+            errorMessage += `: ${error.message}`;
+          } else if (error?.status) {
+            errorMessage += ` (Status: ${error.status})`;
+          }
+          
+          this.snackBar.open(errorMessage, 'Cerrar', { duration: 5000 });
         }
       });
     }

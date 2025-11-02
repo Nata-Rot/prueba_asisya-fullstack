@@ -47,6 +47,7 @@ public class ProductService : IProductService
         var product = _mapper.Map<Product>(dto);
         var createdProduct = await _productRepository.CreateAsync(product);
         
+        // Reload with navigation properties
         var productWithIncludes = await _productRepository.GetByIdAsync(createdProduct.ProductId);
         return _mapper.Map<ProductDto>(productWithIncludes);
     }
@@ -70,6 +71,7 @@ public class ProductService : IProductService
         _mapper.Map(dto, existingProduct);
         var updatedProduct = await _productRepository.UpdateAsync(existingProduct);
         
+        // Reload with navigation properties
         var productWithIncludes = await _productRepository.GetByIdAsync(updatedProduct.ProductId);
         return _mapper.Map<ProductDto>(productWithIncludes);
     }

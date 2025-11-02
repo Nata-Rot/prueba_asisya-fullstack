@@ -11,9 +11,9 @@ public class AuthController : ControllerBase
     private readonly IAuthService _authService;
     private readonly ILogger<AuthController> _logger;
 
-    public AuthController(IAuthService authenticateUserUseCase, ILogger<AuthController> logger)
+    public AuthController(IAuthService authService, ILogger<AuthController> logger)
     {
-        _authService = authenticateUserUseCase;
+        _authService = authService;
         _logger = logger;
     }
 
@@ -22,40 +22,33 @@ public class AuthController : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            var token = await _authService.LoginAsync(loginDto);
 
-            var result = await _authService.LoginAsync(loginDto);
-            
-            if (result == null)
+            if (token == null)
             {
-                _logger.LogWarning("Failed login attempt for user: {Username}", loginDto.Username);
                 return Unauthorized(new { message = "Invalid username or password" });
             }
 
-            _logger.LogInformation("Successful login for user: {Username}", loginDto.Username);
-            return Ok(result);
+            return Ok(token);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during login attempt for user: {Username}", loginDto.Username);
+            _logger.LogError(ex, "Error occurred during login");
             return StatusCode(500, new { message = "An error occurred during login" });
         }
     }
 
-    [HttpPost("validate-token")]
+    [HttpPost("validate")]
     public async Task<ActionResult<bool>> ValidateToken([FromBody] string token)
     {
         try
         {
             var isValid = await _authService.ValidateTokenAsync(token);
-            return Ok(isValid);
+            return Ok(new { isValid });
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error validating token");
+            _logger.LogError(ex, "Error occurred during token validation");
             return StatusCode(500, new { message = "An error occurred during token validation" });
         }
     }

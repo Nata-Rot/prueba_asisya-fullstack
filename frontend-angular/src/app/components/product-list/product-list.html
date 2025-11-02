@@ -31,8 +31,8 @@
           <mat-label>Categoría</mat-label>
           <mat-select [(value)]="selectedCategoryId" (selectionChange)="applyFilters()">
             <mat-option [value]="null">Todas las categorías</mat-option>
-            <mat-option *ngFor="let category of categories" [value]="category.id">
-              {{ category.name }}
+            <mat-option *ngFor="let category of categories" [value]="category.categoryId">
+              {{ category.categoryName }}
             </mat-option>
           </mat-select>
         </mat-form-field>
@@ -71,7 +71,7 @@
         <!-- ID Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
-          <td mat-cell *matCellDef="let product">{{ product.id }}</td>
+          <td mat-cell *matCellDef="let product">{{ product.productId }}</td>
         </ng-container>
 
         <!-- Product Name Column -->

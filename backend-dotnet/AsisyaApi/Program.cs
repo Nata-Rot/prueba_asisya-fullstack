@@ -11,7 +11,6 @@ using AsisyaApi.Infrastructure.Mappings;
 using AsisyaApi.Domain.Interfaces;
 using AsisyaApi.Application.Interfaces;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -72,6 +71,26 @@ var jwtAudience = jwtSection["Audience"] ?? "AsisyaApi";
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        options.Events = new JwtBearerEvents
+        {
+            OnAuthenticationFailed = context =>
+            {
+                Console.WriteLine($"[DEBUG] JWT Authentication Failed: {context.Exception.Message}");
+                return Task.CompletedTask;
+            },
+            OnTokenValidated = context =>
+            {
+                Console.WriteLine($"[DEBUG] JWT Token Validated for user: {context.Principal?.Identity?.Name}");
+                return Task.CompletedTask;
+            },
+            OnMessageReceived = context =>
+            {
+                var token = context.Request.Headers["Authorization"].ToString();
+                Console.WriteLine($"[DEBUG] JWT Token Received: {(string.IsNullOrEmpty(token) ? "No token" : $"Bearer token present (length: {token.Length})")}");
+                return Task.CompletedTask;
+            }
+        };
+        
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -129,7 +148,27 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowAngularApp");
 
-app.UseHttpsRedirection();
+// Request logging middleware
+app.Use(async (context, next) =>
+{
+    Console.WriteLine($"[DEBUG] {context.Request.Method} {context.Request.Path} from {context.Request.Headers["Origin"]}");
+    var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+    if (!string.IsNullOrEmpty(authHeader))
+    {
+        Console.WriteLine($"[DEBUG] Authorization header: {authHeader.Substring(0, Math.Min(50, authHeader.Length))}...");
+    }
+    else
+    {
+        Console.WriteLine($"[DEBUG] No Authorization header present");
+    }
+    
+    await next();
+    
+    Console.WriteLine($"[DEBUG] Response: {context.Response.StatusCode}");
+});
+
+// COMENTADO TEMPORALMENTE PARA DEBUGGING - EL REDIRECT PIERDE EL AUTHORIZATION HEADER
+// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
