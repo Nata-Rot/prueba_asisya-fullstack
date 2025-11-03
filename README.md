@@ -162,6 +162,13 @@ docker-compose up --build
 <img width="1740" height="1072" alt="image" src="https://github.com/user-attachments/assets/b472cb33-5740-4bd7-ab38-863353512046" />
 <img width="1511" height="1008" alt="image" src="https://github.com/user-attachments/assets/d5bc9a58-27fd-4d6e-b2e1-df8a0bb2d29b" />
 
+### Postman-Test
+<img width="1552" height="948" alt="image" src="https://github.com/user-attachments/assets/a9472c6e-01e3-4530-8da4-34150c7b33c4" />
+
+### Data Base
+<img width="1741" height="920" alt="image" src="https://github.com/user-attachments/assets/ef6cd424-ca9b-472a-8a08-f4475e9e52af" />
+
+
 
 
 
