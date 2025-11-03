@@ -29,20 +29,36 @@ public class AuthService : IAuthService
             var user = await _userRepository.GetByUsernameAsync(loginDto.Username);
             Console.WriteLine($"[DEBUG] User found in DB: {user != null}");
             
-            // TEMPORAL: Verificación simple para testing
+            // Verificación de contraseña con BCrypt
             bool isValidPassword = false;
             if (user != null)
             {
                 Console.WriteLine($"[DEBUG] User details - Username: {user.Username}, Role: {user.Role}");
-                if ((loginDto.Username == "admin" && loginDto.Password == "admin123") ||
-                    (loginDto.Username == "user" && loginDto.Password == "user123"))
+                Console.WriteLine($"[DEBUG] Stored password hash: {(user.PasswordHash?.Length > 20 ? user.PasswordHash.Substring(0, 20) + "..." : user.PasswordHash)}");
+                
+                try
                 {
-                    isValidPassword = true;
-                    Console.WriteLine($"[DEBUG] Password validation: SUCCESS");
+                    // Verificar con BCrypt
+                    isValidPassword = BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash);
+                    Console.WriteLine($"[DEBUG] BCrypt password verification: {(isValidPassword ? "SUCCESS" : "FAILED")}");
                 }
-                else
+                catch (Exception bcryptEx)
                 {
-                    Console.WriteLine($"[DEBUG] Password validation: FAILED");
+                    Console.WriteLine($"[DEBUG] BCrypt verification error: {bcryptEx.Message}");
+                    
+                    // Fallback solo para desarrollo - NUNCA en producción
+                    var allowDevFallback = _configuration.GetValue<bool>("Security:AllowDevFallback", false);
+                    if (allowDevFallback && ((loginDto.Username == "admin" && loginDto.Password == "admin123") ||
+                        (loginDto.Username == "user" && loginDto.Password == "user123")))
+                    {
+                        isValidPassword = true;
+                        Console.WriteLine($"[WARN] DEV FALLBACK password validation used - disable in production!");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"[DEBUG] BCrypt failed and no dev fallback allowed");
+                        isValidPassword = false;
+                    }
                 }
             }
             else

@@ -57,6 +57,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProductDto>> CreateProduct([FromBody] CreateProductDto createProductDto)
     {
         try
@@ -72,6 +73,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost("batch")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<ProductDto>>> CreateProductsBatch([FromBody] IEnumerable<CreateProductDto> createProductDtos)
     {
         try
@@ -92,6 +94,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ProductDto>> UpdateProduct(int id, [FromBody] CreateProductDto updateProductDto)
     {
         try
@@ -111,6 +114,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteProduct(int id)
     {
         try
@@ -130,6 +134,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost("generate")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<IEnumerable<ProductDto>>> GenerateProducts([FromQuery] int count = 10, [FromQuery] int? categoryId = null)
     {
         try

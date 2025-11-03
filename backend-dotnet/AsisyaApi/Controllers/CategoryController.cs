@@ -56,6 +56,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CategoryDto>> CreateCategory([FromBody] CreateCategoryDto createCategoryDto)
     {
         try
@@ -75,10 +76,22 @@ public class CategoryController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<CategoryDto>> UpdateCategory(int id, [FromBody] CreateCategoryDto updateCategoryDto)
     {
         try
         {
+            // Validate model state
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (updateCategoryDto == null)
+            {
+                return BadRequest(new { message = "Category data is required" });
+            }
+
             var category = await _categoryService.UpdateAsync(id, updateCategoryDto);
             return Ok(category);
         }
@@ -98,6 +111,7 @@ public class CategoryController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult> DeleteCategory(int id)
     {
         try

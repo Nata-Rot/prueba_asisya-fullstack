@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -75,9 +75,56 @@ export class ProductList implements OnInit {
     'actions'
   ];
 
+  isMobile = false;
+  isTablet = false;
+
   ngOnInit(): void {
+    this.updateDisplayedColumns();
     this.loadCategories();
     this.loadProducts();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any): void {
+    this.updateDisplayedColumns();
+  }
+
+  private updateDisplayedColumns(): void {
+    const width = window.innerWidth;
+    this.isMobile = width < 600;
+    this.isTablet = width >= 600 && width < 768;
+
+    if (this.isMobile) {
+      // Mostrar solo columnas esenciales en móviles
+      this.displayedColumns = ['productName', 'categoryName', 'unitPrice', 'actions'];
+    } else if (this.isTablet) {
+      // Mostrar más columnas en tablets
+      this.displayedColumns = ['productName', 'categoryName', 'unitPrice', 'unitsInStock', 'discontinued', 'actions'];
+    } else {
+      // Mostrar todas las columnas en desktop
+      this.displayedColumns = ['id', 'productName', 'categoryName', 'unitPrice', 'unitsInStock', 'discontinued', 'actions'];
+    }
+  }
+
+  // Role-based permission methods
+  canCreate(): boolean {
+    return this.authService.canCreate();
+  }
+
+  canEdit(): boolean {
+    return this.authService.canEdit();
+  }
+
+  canDelete(): boolean {
+    return this.authService.canDelete();
+  }
+
+  canGenerateProducts(): boolean {
+    return this.authService.canGenerateProducts();
+  }
+
+  getCurrentUser(): any {
+    return this.authService.getCurrentUser();
   }
 
   loadCategories(): void {
@@ -129,6 +176,17 @@ export class ProductList implements OnInit {
   }
 
   openProductForm(product?: Product): void {
+    // Verificar permisos antes de abrir el formulario
+    if (product && !this.canEdit()) {
+      this.snackBar.open('No tienes permisos para editar productos', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    
+    if (!product && !this.canCreate()) {
+      this.snackBar.open('No tienes permisos para crear productos', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
     const dialogRef = this.dialog.open(ProductForm, {
       width: '600px',
       data: { product, categories: this.categories }
@@ -142,10 +200,19 @@ export class ProductList implements OnInit {
   }
 
   editProduct(product: Product): void {
+    if (!this.canEdit()) {
+      this.snackBar.open('No tienes permisos para editar productos', 'Cerrar', { duration: 3000 });
+      return;
+    }
     this.openProductForm(product);
   }
 
   deleteProduct(product: Product): void {
+    if (!this.canDelete()) {
+      this.snackBar.open('No tienes permisos para eliminar productos', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    
     if (confirm(`¿Estás seguro de que quieres eliminar el producto "${product.productName}"?`)) {
       this.productService.deleteProduct(product.productId).subscribe({
         next: () => {
@@ -154,13 +221,21 @@ export class ProductList implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting product:', error);
-          this.snackBar.open('Error al eliminar el producto', 'Cerrar', { duration: 3000 });
+          const errorMessage = error?.status === 403 
+            ? 'No tienes permisos para eliminar este producto' 
+            : 'Error al eliminar el producto';
+          this.snackBar.open(errorMessage, 'Cerrar', { duration: 3000 });
         }
       });
     }
   }
 
   generateProducts(): void {
+    if (!this.canGenerateProducts()) {
+      this.snackBar.open('No tienes permisos para generar productos', 'Cerrar', { duration: 3000 });
+      return;
+    }
+    
     const count = prompt('¿Cuántos productos quieres generar?', '1000');
     if (count && !isNaN(Number(count))) {
       this.isLoading = true;
@@ -171,7 +246,10 @@ export class ProductList implements OnInit {
         },
         error: (error) => {
           console.error('Error generating products:', error);
-          this.snackBar.open('Error al generar productos', 'Cerrar', { duration: 3000 });
+          const errorMessage = error?.status === 403 
+            ? 'No tienes permisos para generar productos' 
+            : 'Error al generar productos';
+          this.snackBar.open(errorMessage, 'Cerrar', { duration: 3000 });
           this.isLoading = false;
         }
       });

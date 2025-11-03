@@ -114,11 +114,10 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  # Frontend Build and Test (will be implemented later)
+  # Frontend Build and Test
   frontend-test:
     name: Frontend Build & Test
     runs-on: ubuntu-latest
-    if: false  # Disabled until Angular app is created
 
     steps:
     - name: Checkout code
@@ -136,15 +135,15 @@ jobs:
       working-directory: frontend-angular
 
     - name: Run linting
-      run: npm run lint
+      run: npm run lint --if-present
       working-directory: frontend-angular
 
     - name: Run tests
-      run: npm run test:ci
+      run: npm run test --if-present -- --watch=false --browsers=ChromeHeadless
       working-directory: frontend-angular
 
     - name: Build application
-      run: npm run build:prod
+      run: npm run build
       working-directory: frontend-angular
 
   # Security Scan

@@ -24,6 +24,8 @@ public class MappingProfile : Profile
         CreateMap<Category, CategoryDto>();
         CreateMap<CreateCategoryDto, Category>()
             .ForMember(dest => dest.CategoryId, opt => opt.Ignore())
-            .ForMember(dest => dest.Products, opt => opt.Ignore());
+            .ForMember(dest => dest.Products, opt => opt.Ignore())
+            .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+            .ForMember(dest => dest.UpdatedAt, opt => opt.Ignore());
     }
 }

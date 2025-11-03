@@ -37,10 +37,21 @@ mat-dialog-content {
 }
 
 mat-dialog-actions {
-  padding: 16px 0;
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  border-top: 1px solid #e0e0e0;
+  margin-top: 16px;
   
   button {
-    margin-left: 8px;
+    margin: 0;
+    min-width: 100px;
+    
+    &:first-child {
+      background-color: #f5f5f5;
+      color: #666;
+    }
   }
 }
 
@@ -50,13 +61,81 @@ mat-spinner {
 }
 
 // Responsive design
-@media (max-width: 600px) {
-  .product-form .form-row {
-    flex-direction: column;
-    gap: 8px;
+
+/* Extra small devices (phones, 480px and down) */
+@media (max-width: 480px) {
+  .product-form {
+    padding: 8px 0;
+    gap: 12px;
+    
+    .form-row {
+      flex-direction: column;
+      gap: 8px;
+    }
   }
   
   mat-dialog-content {
-    min-width: 300px;
+    min-width: 280px;
+    max-width: 95vw;
+    padding: 16px !important;
+  }
+  
+  mat-dialog-title {
+    font-size: 18px !important;
+    padding: 12px 16px !important;
+  }
+  
+  mat-dialog-actions {
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px !important;
+    
+    button {
+      width: 100%;
+      min-width: auto;
+      height: 44px;
+    }
+  }
+}
+
+/* Small devices (phones, 480px to 600px) */
+@media (min-width: 480px) and (max-width: 600px) {
+  .product-form .form-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  mat-dialog-content {
+    min-width: 320px;
+    max-width: 90vw;
+  }
+  
+  mat-dialog-actions {
+    gap: 12px;
+    
+    button {
+      flex: 1;
+      min-width: 120px;
+    }
+  }
+}
+
+/* Medium devices (portrait tablets, 600px to 768px) */
+@media (min-width: 600px) and (max-width: 768px) {
+  mat-dialog-content {
+    min-width: 400px;
+    max-width: 80vw;
+  }
+  
+  .product-form .form-row {
+    gap: 12px;
+  }
+}
+
+/* Large devices (landscape tablets and up, 768px and up) */
+@media (min-width: 768px) {
+  mat-dialog-content {
+    min-width: 500px;
+    max-width: 600px;
   }
 }

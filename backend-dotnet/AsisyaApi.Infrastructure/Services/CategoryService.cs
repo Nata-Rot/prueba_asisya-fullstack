@@ -39,6 +39,8 @@ public class CategoryService : ICategoryService
         }
 
         var category = _mapper.Map<Category>(dto);
+        category.CreatedAt = DateTime.UtcNow;
+        category.UpdatedAt = DateTime.UtcNow;
         var createdCategory = await _categoryRepository.CreateAsync(category);
         
         return _mapper.Map<CategoryDto>(createdCategory);
@@ -59,7 +61,18 @@ public class CategoryService : ICategoryService
             throw new InvalidOperationException($"Category with name '{dto.CategoryName}' already exists.");
         }
 
+        // Preserve important fields before mapping
+        var originalCreatedAt = existingCategory.CreatedAt;
+        var originalCategoryId = existingCategory.CategoryId;
+        
+        // Map the DTO to existing entity
         _mapper.Map(dto, existingCategory);
+        
+        // Restore preserved fields and set UpdatedAt
+        existingCategory.CategoryId = originalCategoryId;
+        existingCategory.CreatedAt = originalCreatedAt;
+        existingCategory.UpdatedAt = DateTime.UtcNow;
+        
         var updatedCategory = await _categoryRepository.UpdateAsync(existingCategory);
         
         return _mapper.Map<CategoryDto>(updatedCategory);

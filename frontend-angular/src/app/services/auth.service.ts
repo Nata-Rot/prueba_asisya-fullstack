@@ -18,6 +18,43 @@ export class AuthService {
     map(token => !!token && !this.isTokenExpired(token))
   );
 
+  getCurrentUser(): any {
+    return this.userSubject.value;
+  }
+
+  getCurrentUserRole(): string | null {
+    const user = this.getCurrentUser();
+    return user ? user.role : null;
+  }
+
+  isAdmin(): boolean {
+    return this.getCurrentUserRole() === 'Admin';
+  }
+
+  isUser(): boolean {
+    return this.getCurrentUserRole() === 'User';
+  }
+
+  hasRole(role: string): boolean {
+    return this.getCurrentUserRole() === role;
+  }
+
+  canCreate(): boolean {
+    return this.isAdmin();
+  }
+
+  canEdit(): boolean {
+    return this.isAdmin();
+  }
+
+  canDelete(): boolean {
+    return this.isAdmin();
+  }
+
+  canGenerateProducts(): boolean {
+    return this.isAdmin();
+  }
+
   login(credentials: LoginRequest): Observable<TokenResponse> {
     return this.http.post<TokenResponse>(`${environment.apiUrl}/auth/login`, credentials)
       .pipe(
