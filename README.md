@@ -140,8 +140,29 @@ dotnet test AsisyaApi.Tests --filter Category=Unit
 docker-compose logs -f
 
 # Reiniciar servicios
+
+
 docker-compose restart
 
 # Limpiar y reconstruir
 docker-compose down
 docker-compose up --build
+```
+
+### Swagger
+<img width="1641" height="1082" alt="image" src="https://github.com/user-attachments/assets/b0796fea-bbae-4e2e-a0e4-5b2d5465104b" />
+
+### Views-Admin
+<img width="1661" height="992" alt="image" src="https://github.com/user-attachments/assets/759049dd-cb34-4a1e-8197-bbc26f56fde6" />
+<img width="1637" height="1076" alt="image" src="https://github.com/user-attachments/assets/8d9f93fb-40ab-44d1-9568-e1e03d20dacf" />
+<img width="1607" height="1078" alt="image" src="https://github.com/user-attachments/assets/3ec248f9-7c85-46fb-b166-84c899cfeb32" />
+<img width="1642" height="1076" alt="image" src="https://github.com/user-attachments/assets/3631c7c4-f630-42d7-a0a7-0c9fb2ad332b" />
+
+### Views-User
+<img width="1740" height="1072" alt="image" src="https://github.com/user-attachments/assets/b472cb33-5740-4bd7-ab38-863353512046" />
+<img width="1511" height="1008" alt="image" src="https://github.com/user-attachments/assets/d5bc9a58-27fd-4d6e-b2e1-df8a0bb2d29b" />
+
+
+
+
+
