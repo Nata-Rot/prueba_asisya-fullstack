@@ -34,8 +34,6 @@ docker-compose ps
 - Frontend Angular: http://localhost:4200
 - Swagger UI: http://localhost:5025/swagger
 
-### 3. Configuración Local (Sin Docker)
-
 #### Configurar Base de Datos
 ```bash
 # Instalar PostgreSQL y crear base de datos
@@ -167,6 +165,10 @@ docker-compose up --build
 
 ### Data Base
 <img width="1741" height="920" alt="image" src="https://github.com/user-attachments/assets/ef6cd424-ca9b-472a-8a08-f4475e9e52af" />
+
+### Docker
+<img width="1547" height="846" alt="image" src="https://github.com/user-attachments/assets/43794575-1be1-4d7f-8eaa-310d69d60abb" />
+
 
 
 
