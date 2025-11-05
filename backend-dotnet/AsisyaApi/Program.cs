@@ -19,7 +19,7 @@ builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Asisya API", Version = "v1" });
-    
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
         Type = SecuritySchemeType.ApiKey,
         Scheme = "Bearer"
     });
-    
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -90,7 +90,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 return Task.CompletedTask;
             }
         };
-        
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
@@ -128,13 +128,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// NO aplicar migraciones automáticamente, usar base de datos existente
-// using (var scope = app.Services.CreateScope())
-// {
-//     var context = scope.ServiceProvider.GetRequiredService<AsisyaDbContext>();
-//     context.Database.Migrate();
-// }
-
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -161,32 +154,31 @@ app.Use(async (context, next) =>
     {
         Console.WriteLine($"[DEBUG] No Authorization header present");
     }
-    
+
     await next();
-    
+
     Console.WriteLine($"[DEBUG] Response: {context.Response.StatusCode}");
 });
 
-// COMENTADO TEMPORALMENTE PARA DEBUGGING - EL REDIRECT PIERDE EL AUTHORIZATION HEADER
-// app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/health", async (IServiceScopeFactory scopeFactory) => 
+app.MapGet("/health", async (IServiceScopeFactory scopeFactory) =>
 {
-    try 
+    try
     {
         using var scope = scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AsisyaDbContext>();
-        
+
         var categoryCount = await context.Categories.CountAsync();
         var userCount = await context.Users.CountAsync();
-        
-        return Results.Ok(new { 
-            status = "healthy", 
+
+        return Results.Ok(new
+        {
+            status = "healthy",
             timestamp = DateTime.UtcNow,
             database = "connected",
             categoryCount = categoryCount,
@@ -195,8 +187,9 @@ app.MapGet("/health", async (IServiceScopeFactory scopeFactory) =>
     }
     catch (Exception ex)
     {
-        return Results.Ok(new { 
-            status = "unhealthy", 
+        return Results.Ok(new
+        {
+            status = "unhealthy",
             timestamp = DateTime.UtcNow,
             database = "error",
             error = ex.Message

@@ -25,17 +25,17 @@ public class AuthService : IAuthService
         try
         {
             Console.WriteLine($"[DEBUG] Login attempt for user: {loginDto.Username}");
-            
+
             var user = await _userRepository.GetByUsernameAsync(loginDto.Username);
             Console.WriteLine($"[DEBUG] User found in DB: {user != null}");
-            
+
             // Verificación de contraseña con BCrypt
             bool isValidPassword = false;
             if (user != null)
             {
                 Console.WriteLine($"[DEBUG] User details - Username: {user.Username}, Role: {user.Role}");
                 Console.WriteLine($"[DEBUG] Stored password hash: {(user.PasswordHash?.Length > 20 ? user.PasswordHash.Substring(0, 20) + "..." : user.PasswordHash)}");
-                
+
                 try
                 {
                     // Verificar con BCrypt
@@ -45,7 +45,7 @@ public class AuthService : IAuthService
                 catch (Exception bcryptEx)
                 {
                     Console.WriteLine($"[DEBUG] BCrypt verification error: {bcryptEx.Message}");
-                    
+
                     // Fallback solo para desarrollo - NUNCA en producción
                     var allowDevFallback = _configuration.GetValue<bool>("Security:AllowDevFallback", false);
                     if (allowDevFallback && ((loginDto.Username == "admin" && loginDto.Password == "admin123") ||
@@ -65,7 +65,7 @@ public class AuthService : IAuthService
             {
                 Console.WriteLine($"[DEBUG] User not found in database");
             }
-            
+
             if (user == null || !isValidPassword)
             {
                 Console.WriteLine($"[DEBUG] Returning null - authentication failed");
@@ -123,7 +123,7 @@ public class AuthService : IAuthService
     {
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"] ?? "default-secret-key-change-this-in-production");
-        
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new[]

@@ -12,7 +12,7 @@ public class Product
     public int? UnitsOnOrder { get; set; }
     public int? ReorderLevel { get; set; }
     public bool Discontinued { get; set; }
-    
+
     // Navigation properties
     public virtual Category? Category { get; set; }
     public virtual Supplier? Supplier { get; set; }

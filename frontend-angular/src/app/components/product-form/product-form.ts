@@ -52,7 +52,7 @@ export class ProductForm {
   constructor(@Inject(MAT_DIALOG_DATA) public data: ProductFormData) {
     this.isEditMode = !!data.product;
     this.productForm = this.createForm();
-    
+
     if (this.isEditMode && data.product) {
       this.populateForm(data.product);
     }
@@ -89,7 +89,7 @@ export class ProductForm {
       this.isLoading = true;
       const formValue = this.productForm.value;
       console.log('Form values:', formValue);
-      
+
       const productData: CreateProductRequest = {
         productName: formValue.productName,
         categoryId: formValue.categoryId || null,
@@ -100,7 +100,7 @@ export class ProductForm {
         reorderLevel: formValue.reorderLevel || 0,
         discontinued: formValue.discontinued === true
       };
-      
+
       console.log('Product data to be sent:', productData);
 
       const operation = this.isEditMode
@@ -111,8 +111,8 @@ export class ProductForm {
         next: (product) => {
           this.isLoading = false;
           this.cdr.markForCheck();
-          const message = this.isEditMode 
-            ? 'Producto actualizado exitosamente' 
+          const message = this.isEditMode
+            ? 'Producto actualizado exitosamente'
             : 'Producto creado exitosamente';
           this.snackBar.open(message, 'Cerrar', { duration: 3000 });
           this.dialogRef.close(product);
@@ -122,11 +122,11 @@ export class ProductForm {
           this.cdr.markForCheck();
           console.error('Error saving product:', error);
           console.error('Product data sent:', productData);
-          
-          let errorMessage = this.isEditMode 
-            ? 'Error al actualizar el producto' 
+
+          let errorMessage = this.isEditMode
+            ? 'Error al actualizar el producto'
             : 'Error al crear el producto';
-            
+
           // Agregar más detalles del error si están disponibles
           if (error?.error?.message) {
             errorMessage += `: ${error.error.message}`;
@@ -135,7 +135,7 @@ export class ProductForm {
           } else if (error?.status) {
             errorMessage += ` (Status: ${error.status})`;
           }
-          
+
           this.snackBar.open(errorMessage, 'Cerrar', { duration: 5000 });
         }
       });

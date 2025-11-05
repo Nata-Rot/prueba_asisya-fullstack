@@ -41,7 +41,7 @@ public class ProductController : ControllerBase
         try
         {
             var product = await _productService.GetByIdAsync(id);
-            
+
             if (product == null)
             {
                 return NotFound(new { message = $"Product with ID {id} not found" });
@@ -158,7 +158,7 @@ public class ProductController : ControllerBase
             for (int i = 0; i < count; i++)
             {
                 var productName = $"{productNames[random.Next(productNames.Length)]} {random.Next(1000, 9999)}";
-                
+
                 createProductDtos.Add(new CreateProductDto
                 {
                     ProductName = productName,
@@ -168,7 +168,7 @@ public class ProductController : ControllerBase
                     UnitsInStock = (short)random.Next(0, 100),
                     UnitsOnOrder = (short)random.Next(0, 50),
                     ReorderLevel = (short)random.Next(5, 20),
-                    Discontinued = random.Next(10) == 0 
+                    Discontinued = random.Next(10) == 0
                 });
             }
 

@@ -32,7 +32,7 @@ public class CategoryRepository : ICategoryRepository
     {
         category.CreatedAt = DateTime.UtcNow;
         category.UpdatedAt = DateTime.UtcNow;
-        
+
         _context.Categories.Add(category);
         await _context.SaveChangesAsync();
         return category;
@@ -41,7 +41,7 @@ public class CategoryRepository : ICategoryRepository
     public async Task<Category> UpdateAsync(Category category)
     {
         category.UpdatedAt = DateTime.UtcNow;
-        
+
         _context.Categories.Update(category);
         await _context.SaveChangesAsync();
         return category;

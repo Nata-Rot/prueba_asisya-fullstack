@@ -17,7 +17,7 @@ public class ProductBatchProcessingService : BackgroundService
     {
         _serviceProvider = serviceProvider;
         _logger = logger;
-        
+
         // Create a channel for queuing batch requests
         var options = new BoundedChannelOptions(100)
         {
@@ -26,7 +26,7 @@ public class ProductBatchProcessingService : BackgroundService
             AllowSynchronousContinuations = false,
             FullMode = BoundedChannelFullMode.Wait
         };
-        
+
         _queue = Channel.CreateBounded<ProductBatchRequest>(options);
     }
 
@@ -50,14 +50,14 @@ public class ProductBatchProcessingService : BackgroundService
         {
             try
             {
-                _logger.LogInformation("Processing batch request {RequestId} with {ProductCount} products", 
+                _logger.LogInformation("Processing batch request {RequestId} with {ProductCount} products",
                     request.RequestId, request.Products.Count);
 
                 using var scope = _serviceProvider.CreateScope();
                 var productService = scope.ServiceProvider.GetRequiredService<IProductService>();
-                
+
                 await productService.CreateBatchAsync(request.Products);
-                
+
                 _logger.LogInformation("Successfully processed batch request {RequestId}", request.RequestId);
             }
             catch (Exception ex)

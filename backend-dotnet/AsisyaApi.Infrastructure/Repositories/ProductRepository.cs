@@ -76,17 +76,17 @@ public class ProductRepository : IProductRepository
 
         const int batchSize = 1000;
         var totalProducts = new List<Product>();
-        
+
         for (int i = 0; i < productList.Count; i += batchSize)
         {
             var batch = productList.Skip(i).Take(batchSize).ToList();
             await _context.Products.AddRangeAsync(batch);
             await _context.SaveChangesAsync();
             totalProducts.AddRange(batch);
-            
+
             _context.ChangeTracker.Clear();
         }
-        
+
         return totalProducts;
     }
 

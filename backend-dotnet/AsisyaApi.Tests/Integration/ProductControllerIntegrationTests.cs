@@ -32,7 +32,7 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
 
         var loginResponse = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
         var tokenResponse = await loginResponse.Content.ReadFromJsonAsync<TokenDto>();
-        
+
         return tokenResponse?.Token ?? throw new InvalidOperationException("Failed to get auth token");
     }
 
@@ -45,29 +45,24 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
     [Fact]
     public async Task GetProducts_ReturnsUnauthorized_WhenNotAuthenticated()
     {
-        // Act
         var response = await _client.GetAsync("/api/product");
 
-        // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 
     [Fact]
     public async Task GetProducts_ReturnsSuccess_WhenAuthenticated()
     {
-        // Arrange
         await AuthenticateAsync();
 
-        // Act
         var response = await _client.GetAsync("/api/product");
 
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var content = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var products = JsonSerializer.Deserialize<PagedResultDto<ProductDto>>(content, options);
-        
+
         Assert.NotNull(products);
         Assert.True(products.TotalCount >= 0);
     }
@@ -75,9 +70,8 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
     [Fact]
     public async Task CreateProduct_ReturnsCreated_WhenValidProduct()
     {
-        // Arrange
         await AuthenticateAsync();
-        
+
         var createProductDto = new CreateProductDto
         {
             ProductName = "Integration Test Product",
@@ -86,16 +80,14 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
             UnitsInStock = 10
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync("/api/product", createProductDto);
 
-        // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        
+
         var content = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var product = JsonSerializer.Deserialize<ProductDto>(content, options);
-        
+
         Assert.NotNull(product);
         Assert.Equal("Integration Test Product", product.ProductName);
         Assert.Equal(99.99m, product.UnitPrice);
@@ -104,38 +96,32 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
     [Fact]
     public async Task GetProduct_ReturnsNotFound_WhenProductDoesNotExist()
     {
-        // Arrange
         await AuthenticateAsync();
 
-        // Act
         var response = await _client.GetAsync("/api/product/99999");
 
-        // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
     [Fact]
     public async Task CreateProductsBatch_ReturnsSuccess_WhenValidProducts()
     {
-        // Arrange
         await AuthenticateAsync();
-        
+
         var products = new List<CreateProductDto>
         {
             new CreateProductDto { ProductName = "Batch Product 1", UnitPrice = 10.00m, CategoryId = 1 },
             new CreateProductDto { ProductName = "Batch Product 2", UnitPrice = 20.00m, CategoryId = 2 }
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync("/api/product/batch", products);
 
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var content = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var createdProducts = JsonSerializer.Deserialize<List<ProductDto>>(content, options);
-        
+
         Assert.NotNull(createdProducts);
         Assert.Equal(2, createdProducts.Count);
     }
@@ -143,23 +129,20 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
     [Fact]
     public async Task Login_ReturnsToken_WhenValidCredentials()
     {
-        // Arrange
         var loginDto = new LoginDto
         {
             Username = "admin",
             Password = "admin123"
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
 
-        // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+
         var content = await response.Content.ReadAsStringAsync();
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         var tokenResponse = JsonSerializer.Deserialize<TokenDto>(content, options);
-        
+
         Assert.NotNull(tokenResponse);
         Assert.NotEmpty(tokenResponse.Token);
         Assert.Equal("admin", tokenResponse.Username);
@@ -168,17 +151,14 @@ public class ProductControllerIntegrationTests : IClassFixture<IntegrationTestWe
     [Fact]
     public async Task Login_ReturnsUnauthorized_WhenInvalidCredentials()
     {
-        // Arrange
         var loginDto = new LoginDto
         {
             Username = "invalid",
             Password = "invalid"
         };
 
-        // Act
         var response = await _client.PostAsJsonAsync("/api/auth/login", loginDto);
 
-        // Assert
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }

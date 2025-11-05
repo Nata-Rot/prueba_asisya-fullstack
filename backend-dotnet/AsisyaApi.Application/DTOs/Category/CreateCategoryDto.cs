@@ -8,25 +8,24 @@ public class CreateCategoryDto
     [Required]
     [StringLength(255, MinimumLength = 1)]
     public string CategoryName { get; set; } = string.Empty;
-    
+
     public string? Description { get; set; }
-    
-    // Allow both byte[] and string for picture
+
     [JsonIgnore]
     public byte[]? Picture { get; set; }
-    
+
     [JsonPropertyName("picture")]
-    public object? PictureData 
-    { 
+    public object? PictureData
+    {
         get => Picture;
-        set 
+        set
         {
             if (value == null)
             {
                 Picture = null;
                 return;
             }
-            
+
             if (value is byte[] bytes)
             {
                 Picture = bytes;
@@ -41,12 +40,10 @@ public class CreateCategoryDto
                 {
                     try
                     {
-                        // Try Base64 first
                         Picture = Convert.FromBase64String(str);
                     }
                     catch
                     {
-                        // Fallback to UTF8 bytes
                         Picture = System.Text.Encoding.UTF8.GetBytes(str);
                     }
                 }

@@ -40,7 +40,7 @@ public class CategoryController : ControllerBase
         try
         {
             var category = await _categoryService.GetByIdAsync(id);
-            
+
             if (category == null)
             {
                 return NotFound(new { message = $"Category with ID {id} not found" });
@@ -81,7 +81,6 @@ public class CategoryController : ControllerBase
     {
         try
         {
-            // Validate model state
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);

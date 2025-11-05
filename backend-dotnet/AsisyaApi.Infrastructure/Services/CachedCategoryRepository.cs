@@ -21,14 +21,14 @@ public class CachedCategoryRepository : ICategoryRepository
     public async Task<Category?> GetByIdAsync(int id)
     {
         var cacheKey = $"{CacheKeyPrefix}{id}";
-        
+
         if (_cache.TryGetValue(cacheKey, out Category? cachedCategory))
         {
             return cachedCategory;
         }
 
         var category = await _categoryRepository.GetByIdAsync(id);
-        
+
         if (category != null)
         {
             _cache.Set(cacheKey, category, _cacheExpiration);
@@ -53,27 +53,27 @@ public class CachedCategoryRepository : ICategoryRepository
     public async Task<Category> CreateAsync(Category category)
     {
         var createdCategory = await _categoryRepository.CreateAsync(category);
-        
+
         // Invalidate cache
         InvalidateCache(createdCategory.CategoryId);
-        
+
         return createdCategory;
     }
 
     public async Task<Category> UpdateAsync(Category category)
     {
         var updatedCategory = await _categoryRepository.UpdateAsync(category);
-        
+
         // Invalidate cache
         InvalidateCache(updatedCategory.CategoryId);
-        
+
         return updatedCategory;
     }
 
     public async Task DeleteAsync(int id)
     {
         await _categoryRepository.DeleteAsync(id);
-        
+
         // Invalidate cache
         InvalidateCache(id);
     }

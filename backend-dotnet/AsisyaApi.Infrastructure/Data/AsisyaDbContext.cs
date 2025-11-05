@@ -22,7 +22,7 @@ public class AsisyaDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         // Configure Product
         modelBuilder.Entity<Product>(entity =>
         {
@@ -38,12 +38,12 @@ public class AsisyaDbContext : DbContext
             entity.Property(e => e.UnitsOnOrder).HasColumnName("unitsonorder");
             entity.Property(e => e.ReorderLevel).HasColumnName("reorderlevel");
             entity.Property(e => e.Discontinued).HasColumnName("discontinued").HasDefaultValue(false);
-            
+
             entity.HasOne(d => d.Category)
                 .WithMany(p => p.Products)
                 .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.SetNull);
-                
+
             entity.HasOne(d => d.Supplier)
                 .WithMany(p => p.Products)
                 .HasForeignKey(d => d.SupplierId)
@@ -95,7 +95,7 @@ public class AsisyaDbContext : DbContext
             entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.CreatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
             entity.Property(e => e.UpdatedAt).HasDefaultValueSql("CURRENT_TIMESTAMP");
-            
+
             entity.HasIndex(e => e.Username).IsUnique();
             entity.HasIndex(e => e.Email).IsUnique();
         });

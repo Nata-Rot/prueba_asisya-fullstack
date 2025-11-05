@@ -13,7 +13,7 @@ public class MappingProfile : Profile
         CreateMap<Product, ProductDto>()
             .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.CategoryName : null))
             .ForMember(dest => dest.CategoryPicture, opt => opt.MapFrom(src => src.Category != null ? src.Category.Picture : null));
-            
+
         CreateMap<CreateProductDto, Product>()
             .ForMember(dest => dest.ProductId, opt => opt.Ignore())
             .ForMember(dest => dest.Category, opt => opt.Ignore())

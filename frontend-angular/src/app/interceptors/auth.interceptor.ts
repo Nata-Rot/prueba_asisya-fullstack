@@ -10,7 +10,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const snackBar = inject(MatSnackBar);
   const router = inject(Router);
   const token = authService.getToken();
-  
+
   let authReq = req;
   if (token) {
     authReq = req.clone({
@@ -31,7 +31,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         // Sin permisos - mostrar mensaje
         snackBar.open('No tienes permisos para realizar esta acción.', 'Cerrar', { duration: 5000 });
       }
-      
+
       return throwError(() => error);
     })
   );

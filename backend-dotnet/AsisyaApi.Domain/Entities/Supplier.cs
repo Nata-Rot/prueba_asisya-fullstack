@@ -14,7 +14,7 @@ public class Supplier
     public string? Phone { get; set; }
     public string? Fax { get; set; }
     public string? HomePage { get; set; }
-    
+
     // Navigation properties
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

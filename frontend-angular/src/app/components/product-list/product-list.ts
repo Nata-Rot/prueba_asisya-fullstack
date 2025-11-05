@@ -66,12 +66,12 @@ export class ProductList implements OnInit {
   isLoading = false;
 
   displayedColumns: string[] = [
-    'id', 
-    'productName', 
-    'categoryName', 
-    'unitPrice', 
-    'unitsInStock', 
-    'discontinued', 
+    'id',
+    'productName',
+    'categoryName',
+    'unitPrice',
+    'unitsInStock',
+    'discontinued',
     'actions'
   ];
 
@@ -141,7 +141,7 @@ export class ProductList implements OnInit {
 
   loadProducts(): void {
     this.isLoading = true;
-    
+
     const query: ProductQuery = {
       page: this.currentPage,
       pageSize: this.pageSize,
@@ -181,7 +181,7 @@ export class ProductList implements OnInit {
       this.snackBar.open('No tienes permisos para editar productos', 'Cerrar', { duration: 3000 });
       return;
     }
-    
+
     if (!product && !this.canCreate()) {
       this.snackBar.open('No tienes permisos para crear productos', 'Cerrar', { duration: 3000 });
       return;
@@ -212,7 +212,7 @@ export class ProductList implements OnInit {
       this.snackBar.open('No tienes permisos para eliminar productos', 'Cerrar', { duration: 3000 });
       return;
     }
-    
+
     if (confirm(`¿Estás seguro de que quieres eliminar el producto "${product.productName}"?`)) {
       this.productService.deleteProduct(product.productId).subscribe({
         next: () => {
@@ -221,8 +221,8 @@ export class ProductList implements OnInit {
         },
         error: (error) => {
           console.error('Error deleting product:', error);
-          const errorMessage = error?.status === 403 
-            ? 'No tienes permisos para eliminar este producto' 
+          const errorMessage = error?.status === 403
+            ? 'No tienes permisos para eliminar este producto'
             : 'Error al eliminar el producto';
           this.snackBar.open(errorMessage, 'Cerrar', { duration: 3000 });
         }
@@ -235,7 +235,7 @@ export class ProductList implements OnInit {
       this.snackBar.open('No tienes permisos para generar productos', 'Cerrar', { duration: 3000 });
       return;
     }
-    
+
     const count = prompt('¿Cuántos productos quieres generar?', '1000');
     if (count && !isNaN(Number(count))) {
       this.isLoading = true;
@@ -246,8 +246,8 @@ export class ProductList implements OnInit {
         },
         error: (error) => {
           console.error('Error generating products:', error);
-          const errorMessage = error?.status === 403 
-            ? 'No tienes permisos para generar productos' 
+          const errorMessage = error?.status === 403
+            ? 'No tienes permisos para generar productos'
             : 'Error al generar productos';
           this.snackBar.open(errorMessage, 'Cerrar', { duration: 3000 });
           this.isLoading = false;
